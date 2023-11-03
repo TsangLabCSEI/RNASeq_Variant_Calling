@@ -1,0 +1,17 @@
+name: FLTMRG 
+
+channels:
+ - conda-forge
+ - bioconda
+ - anaconda
+ - r
+
+dependencies:
+ - bcftools
+ - vcftools
+ - samtools=1.11
+ - r-vcfR
+ - r-stringr
+ - r-pheatmap
+ - r-tidyr
+ - HTSlib

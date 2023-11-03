@@ -3,8 +3,10 @@ library(stringr)
 library(pheatmap)
 library(tidyr)
 
+args = commandArgs(trailingOnly=TRUE)
+
 #read vcf
-vcf <- read.vcfR("all.vcf.gz", verbose = FALSE)
+vcf <- read.vcfR(args[1], verbose = FALSE)
 gt <- extract.gt(vcf, return.alleles = FALSE)
 df<-sapply(as.data.frame(gt), function(x) {str_detect(x, "0/1") | str_detect(x, "1/0") | str_detect(x, "1/1")})
 #convert NAs to 0
@@ -21,7 +23,8 @@ pheatmap(df,cluster_cols=FALSE,show_rownames = FALSE,show_colnames = FALSE, file
 pheatmap(df[which(rowSums(df)==1),],cluster_cols=FALSE,show_rownames = FALSE,show_colnames = TRUE, filename="./uniquevars.png")
 
 #plot number of unique variants per patient
-png("./numuniquevars.png")
+png("./numuniquevars.png", width = 800, height = 480)
+par(mar=c(5,8,4,1)+.1)
 barplot(colSums(df[which(rowSums(df)==1),]),las=2,horiz = TRUE)
 dev.off()
 
