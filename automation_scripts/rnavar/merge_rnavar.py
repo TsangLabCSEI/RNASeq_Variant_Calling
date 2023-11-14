@@ -63,7 +63,7 @@ if __name__ == "__main__":
 
         MERGE_ARGS.append(folder + '/' + folder + ('.DP%s.fordemux.filt.recode.vcf.gz' % depth))
         runinfo  = ' INFO/DP>' + str(depth)
-        subprocess.run(['./filt_merge.sh', path, runinfo, str(depth)])
+        subprocess.run(['./filt_merge_rnavar.sh', path, runinfo, str(depth)])
 
     MERGE_ARGS.append('-o')
     MERGE_ARGS.append('all.vcf.gz')
