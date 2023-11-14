@@ -8,21 +8,22 @@ Scripts to filter and merge VCFs as well as make some basic diagnostic plots.
 
 merge.py command:
 
-python3 ./merge.py DEPTH ZIPPED SAMPLE_NAMES
+python3 ./merge.py DEPTH UNZIPPED FINAL_VAR_COUNT SAMPLE_NAMES
 
 DEPTH = Minimum sequencing depth to filter by (default = 2000)
-ZIPPED = Whether or not input vcfs are zipped (0 = zipped (.vcf.gz)) or (1 = unzipped (.vcf)). (default = 0)
+UNZIPPED = Whether or not input vcfs are zipped (0 = zipped (.vcf.gz)) or (1 = unzipped (.vcf)). (default = 0)
+FINAL_VAR_COUNT = How many variants per sample to be included in the vcf. Randomly sampled. (default = 100)
 SAMPLE_NAMES = Names of specific samples to include. Default is to include all samples.
 
 i.e.
 python3 ./merge.py 500 1
     - Sequencing depth of 500 reads, target files have .vcf extension, will target all files
-python3 ./merge.py 300 0 foo bar 
-    - Sequencing depth of 300 reads, target files have .vcf.gz extension, will target files foo.haplotypecaller.filtered.vcf.gz and bar.haplotypecaller.filtered.vcf.gz
+python3 ./merge.py 300 0 75 foo bar 
+    - Sequencing depth of 300 reads, target files have .vcf.gz extension, will output 75 unique variants per sample, will target files foo.haplotypecaller.filtered.vcf.gz and bar.haplotypecaller.filtered.vcf.gz
 
 
 filt_plot.R command:
-Rscript ./filt_plot.R FILENAME.vcf.gz
+Rscript ./filt_plot.R FILENAME.vcf.gz FINAL_VAR_COUNT SAMPLE_NAMES
 
 
 folder structure based on rnavar output. Target files should have same sample name as their parent folder. 
@@ -45,4 +46,4 @@ folder structure based on rnavar output. Target files should have same sample na
 +-- sample_name_N
 
 *This file is made by the script. Will only be present if you have run it before
-**This file is the only file needed to be present in the folder
+**This is the minimally required file

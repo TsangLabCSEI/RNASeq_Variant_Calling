@@ -10,7 +10,7 @@ if __name__ == "__main__":
     zipped = 0
     allfolders = 1
     if len(sys.argv)>1:
-        #check if input passed by user is safe and sensical
+        #Get and check depth value from user
         if 0 <= int(sys.argv[1]):
             depth = int(sys.argv[1])
         else:
@@ -21,26 +21,36 @@ if __name__ == "__main__":
                 zipped = 1
             if (int(sys.argv[2]) not in [0, 1]):
                 sys.exit("Invalid Args: please use 0 (zipped (.vcf.gz)) or 1 (unzipped (.vcf)) to indicate source file type")
-        #check if specific samples are specified
+        #Get and check final number of variants to be downsampled
         if len(sys.argv)>3:
-            allfolders = 0
-            FILES  = sys.argv[3:]
-            if (int(sys.argv[2]) == 1):
-                for i in range(0,len(FILES)):
-                    FILES[i] = (FILES[i] + '.haplotypecaller.filtered.vcf')
+            if 0 <= int(sys.argv[3]):
+                var_count = sys.argv[3]
             else:
-                for i in range(0,len(FILES)):
-                    FILES[i] = (FILES[i] + '.haplotypecaller.filtered.vcf.gz')
+                sys.exit("Invalid Args: Final variant count must be an integer larger than 0")
+        #check if specific samples are specified
+        if len(sys.argv)>4:
+            allfolders = 0
+            SPEC_FILES  = sys.argv[4:]
            
-    #get list of files with this suffix in current directory's subfolders
-    if allfolders == 1:
-        if (zipped == 1):
-            FILES = [os.path.basename(x) for x in glob.glob('./**/*.haplotypecaller.filtered.vcf')]
-        else:
-            FILES = [os.path.basename(x) for x in glob.glob('./**/*.haplotypecaller.filtered.vcf.gz')]
+    #get list of files with this suffix in current directory's subfolders. Unless specified it will use all available samples
+    if (zipped == 1):
+        FILES = [os.path.basename(x) for x in glob.glob('./**/*.haplotypecaller.filtered.vcf')]
+    else:
+        FILES = [os.path.basename(x) for x in glob.glob('./**/*.haplotypecaller.filtered.vcf.gz')]
     
     MERGE_ARGS = ['bcftools', 'merge']
-
+    R_ARGS = ['Rscript', './filt_plot.R', 'all.vcf.gz', var_count]
+    if allfolders == 1:
+        for F in FILES:
+            if (zipped == 0):
+                f = F.removesuffix('.haplotypecaller.filtered.vcf.gz')
+            else:
+                f = F.removesuffix('.haplotypecaller.filtered.vcf')
+            R_ARGS.append(f)
+    else:
+        for f in SPEC_FILES:
+            R_ARGS.append(f)
+    
     for F in FILES:
         if (zipped == 0):
             folder = F.removesuffix('.haplotypecaller.filtered.vcf.gz')
@@ -59,4 +69,4 @@ if __name__ == "__main__":
     MERGE_ARGS.append('all.vcf.gz')
 
     subprocess.run(MERGE_ARGS)
-    subprocess.run(['Rscript', './filt_plot.R', 'all.vcf.gz'])
+    subprocess.run(R_ARGS)
