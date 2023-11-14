@@ -1,4 +1,4 @@
-Scripts to filter and merge VCFs as well as make some basic diagnostic plots.
+# Scripts to filter and merge VCFs & make some basic diagnostic plots
 
 1. Use mamba to build environment from environment.yml
 2. Place scripts and bed file in the top directory. For nextflow's rnavar output this would be the directory called variant_calling.
@@ -6,7 +6,7 @@ Scripts to filter and merge VCFs as well as make some basic diagnostic plots.
 4. filt_plot.R can be run on its own if you have a merged vcf file already.
 
 
-merge.py command:
+## merge.py command:
 
 python3 ./merge.py DEPTH UNZIPPED FINAL_VAR_COUNT SAMPLE_NAMES
 
@@ -22,11 +22,11 @@ python3 ./merge.py 300 0 75 foo bar
     - Sequencing depth of 300 reads, target files have .vcf.gz extension, will output 75 unique variants per sample, will target files foo.haplotypecaller.filtered.vcf.gz and bar.haplotypecaller.filtered.vcf.gz
 
 
-filt_plot.R command:
+## filt_plot.R command:
 Rscript ./filt_plot.R FILENAME.vcf.gz FINAL_VAR_COUNT SAMPLE_NAMES
 
 
-folder structure based on rnavar output. Target files should have same sample name as their parent folder. 
+## folder structure based on rnavar output. Target files should have same sample name as their parent folder. 
 ./
 +-- environment.yml
 +-- filt_merge.sh
