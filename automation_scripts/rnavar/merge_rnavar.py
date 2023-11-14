@@ -32,20 +32,20 @@ if __name__ == "__main__":
             allfolders = 0
             SPEC_FILES  = sys.argv[4:]
            
-    #get list of files with this suffix in current directory. Unless specified it will use all available samples
+    #get list of files with this suffix in current directory's subfolders. Unless specified it will use all available samples
     if (zipped == 1):
-        FILES = [os.path.basename(x) for x in glob.glob('./*.vcf')]
+        FILES = [os.path.basename(x) for x in glob.glob('./**/*.haplotypecaller.filtered.vcf')]
     else:
-        FILES = [os.path.basename(x) for x in glob.glob('./*.vcf.gz')]
+        FILES = [os.path.basename(x) for x in glob.glob('./**/*.haplotypecaller.filtered.vcf.gz')]
     
-    MERGE_ARGS = ['bcftools', 'concat']
-    R_ARGS = ['Rscript', './filt_plot.R', 'all.vcf.gz', var_count]
+    MERGE_ARGS = ['bcftools', 'merge']
+    R_ARGS = ['Rscript', './filt_plot_rnavar.R', 'all.vcf.gz', var_count]
     if allfolders == 1:
         for F in FILES:
             if (zipped == 0):
-                f = F.removesuffix('.vcf.gz')
+                f = F.removesuffix('.haplotypecaller.filtered.vcf.gz')
             else:
-                f = F.removesuffix('.vcf')
+                f = F.removesuffix('.haplotypecaller.filtered.vcf')
             R_ARGS.append(f)
     else:
         for f in SPEC_FILES:
@@ -53,14 +53,15 @@ if __name__ == "__main__":
     
     for F in FILES:
         if (zipped == 0):
-            subprocess.run(['gunzip', '-k', F])
-            path = F.removesuffix('.gz')
-            samp = F.removesuffix('.vcf.gz')
+            folder = F.removesuffix('.haplotypecaller.filtered.vcf.gz')
+            path = folder + '/' + F
+            subprocess.run(['gunzip', '-k', path])
+            path = folder + '/' + (F.removesuffix('.gz'))
         else:
-            path = F
-            samp = F.removesuffix('.vcf')
+            folder = F.removesuffix('.haplotypecaller.filtered.vcf')
+            path = folder + '/' + F
 
-        MERGE_ARGS.append(samp + ('.DP%s.fordemux.filt.recode.vcf.gz' % depth))
+        MERGE_ARGS.append(folder + '/' + folder + ('.DP%s.fordemux.filt.recode.vcf.gz' % depth))
         runinfo  = ' INFO/DP>' + str(depth)
         subprocess.run(['./filt_merge.sh', path, runinfo, str(depth)])
 
