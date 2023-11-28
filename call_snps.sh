@@ -1,2 +1,0 @@
-# call snps using samtools<=v1.11
-samtools mpileup -A -q 4 -t AD,DP -l common_all_20170710.vcf -f ncbi_dataset/data/GCF_000001405.26/GCF_000001405.26_GRCh38_genomic.fna *.bam -g | bcftools call -m - -0 v -f GQ > test.vcf
