@@ -13,3 +13,4 @@ https://demultiplexing-doublet-detecting-docs.readthedocs.io/en/latest/DataPrep.
 Use for example the hadge pipeline:
 https://github.com/theislab/hadge
 
+!(hadge pipeline run)[Screenshot 2024-06-21 at 7.33.01 AM.png]
