@@ -1,5 +1,9 @@
 #!/bin/sh
 
+ml load BCFtools/1.16-GCCcore-10.2.0
+ml load VCFtools/0.1.16-GCCcore-10.2.0
+
+
 bcftools view -i $2 $1 > ${1%.vcf}.DP${3}.vcf
 
 #make sure bed file is same folder or the path is correct       
