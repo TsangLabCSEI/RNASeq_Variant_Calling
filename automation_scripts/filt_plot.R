@@ -9,13 +9,14 @@ args = commandArgs(trailingOnly=TRUE)
 #read vcf
 vcf <- read.vcfR(args[1], verbose = FALSE)
 gt <- extract.gt(vcf, return.alleles = FALSE)
-df<-sapply(as.data.frame(gt), function(x) {str_detect(x, "0/1") | str_detect(x, "1/0") | str_detect(x, "1/1")})
+df_org <-sapply(as.data.frame(gt), function(x) {str_detect(x, "0/1") | str_detect(x, "1/0") | str_detect(x, "1/1")})
 #convert NAs to 0
-df[is.na(df)] <- 0
+df_org[is.na(df_org)] <- 0
 CHROMs <- getFIX(vcf)[, 'CHROM']
 
 samples <- args[3:length(args)]
 samples <- append(samples, "FORMAT", 0)
+df <- df_org[,which(colnames(df_org) %in% samples)]
 
 m <- as.data.frame(matrix(0, ncol = ncol(df), nrow = nrow(df)))
 colnames(m) <- colnames(df)
@@ -26,7 +27,7 @@ for (i in 1:length(colnames(df))) {
   m[idx,i] = 1
 }
 
-write.vcf(vcf[which(rowSums(m)==1), samples],"filtered_variants.vcf.gz")
+write.vcf(vcf[which(rowSums(m)==1), c(1,which(colnames(df_org) %in% samples)+1)],"filtered_variants.vcf.gz")
 
 #free up space and load in subselected vcf to generate plots
 vcf <- read.vcfR("filtered_variants.vcf.gz", verbose = FALSE)
